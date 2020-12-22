@@ -1,0 +1,135 @@
+go get ./...
+
+plancoin
+
+plancoincli keys add overlord
+
+
+plancoincli tx send plan12hyr3camgvcdf0jffvg50cr92frct3wgmxc4fl plan1uk5xpx3zgevdpvakymzvpp2twzxd39rw3zn56k 1000000plan --from bank2 --fees 100plan --gas auto --gas-adjustment 1.5
+
+plancoincli query account plan1uk5xpx3zgevdpvakymzvpp2twzxd39rw3zn56k
+plancoincli query posmining get plan1uk5xpx3zgevdpvakymzvpp2twzxd39rw3zn56k
+plancoincli tx posmining reinvest plan --from overlord --gas auto --gas-adjustment 1.5
+
+plancoincli tx staking create-validator --chain-id plancoin --amount 500000000plan --from "cryptoslonik" --moniker "Zyuzembik" --pubkey planconsopenpub1zcjduepqn8g8qr7p53j4uk4vtlch8elshv4etp6qapshhsjrnkn5ndruyvkqgjn6kx --details "details" --min-self-delegation 100000000 --commission-rate "0.05" --commission-max-rate "0.2" --commission-max-change-rate "0.01" --min-self-delegation 100000000 --chain-id plancoin
+
+plancoincli tx staking create-validator --chain-id plancoin --amount 500000000plan --from "cryptoslonik" --moniker "Zyuzembik" --pubkey $(plancoind tendermint show-validator) --details "details" --min-self-delegation 100000000 --commission-rate "0.05" --commission-max-rate "0.2" --commission-max-change-rate "0.01"
+
+
+start
+================================================================================================================================================================================================================================================
+
+go get ./...
+plancoind init pvlnode --chain-id plancoinlab
+
+# Заменить stake на plan в 2 -х местах
+
+plancoincli config chain-id plancoinlab
+plancoincli config output json
+plancoincli config indent true
+plancoincli config trust-node true
+
+plancoincli keys add bank1
+plancoincli keys add bank2
+plancoincli keys add overlord
+plancoincli keys add test
+
+plancoind add-genesis-account $(plancoincli keys show bank1 -a) 100000100000000plan
+plancoind add-genesis-account $(plancoincli keys show bank2 -a) 100000000000000plan
+
+plancoind gentx --name bank1 --amount 100000000plan --min-self-delegation 100000000
+
+plancoind collect-gentxs
+plancoind validate-genesis
+plancoind start
+
+# cli start
+plancoincli config chain-id planmao
+plancoincli config trust-node true
+plancoincli config output json
+plancoincli config indent true
+plancoincli rest-server
+
+plancoincli config node tcp://localhost:26657
+
+
+
+# plancoincli query staking params
+plancoind unsafe-reset-all
+
+
+# 2 node start
+plancoind init PVLnode --chain-id planmao
+
+
+
+plancoind export --for-zero-height --height=4000 > export.json
+
+
+================================================================================================================================================
+
+plancoincli tx send $(plancoincli keys show bank2 -a) $(plancoincli keys show overlord -a) 100000000000plan --from bank2 --fees 100plan --gas auto --gas-adjustment 1.5
+plancoincli query account $(plancoincli keys show overlord -a)
+
+plancoincli tx send $(plancoincli keys show overlord -a) $(plancoincli keys show test -a) 99900plan --from bank2 --fees 100plan --gas auto --gas-adjustment 1.5
+plancoincli query account $(plancoincli keys show overlord -a)
+plancoincli query account $(plancoincli keys show test -a)
+
+plancoincli query posmining get $(plancoincli keys show overlord -a)
+plancoincli tx posmining reinvest plan --from overlord --gas auto --gas-adjustment 1.5
+plancoincli query account $(plancoincli keys show overlord -a)
+
+================================================================================================================================================
+
+
+
+plancoincli config chain-id planmao
+plancoincli config node tcp://54.187.0.50:26657
+plancoincli config output json
+plancoincli config indent true
+plancoincli config trust-node true
+
+
+
+
+
+
+plancoincli tx posmining reinvest plan --from {имя_ключа}
+plancoincli tx posmining reinvest plan --from {имя_ключа} --gas auto --gas-adjustment 1.5
+
+plancoincli tx plancoin change-params --from "PVL"
+
+
+
+================================================================================================================================================
+
+plancoincli query posmining get $(plancoincli keys show test -a)
+
+
+plancoincli tx send $(plancoincli keys show bank2 -a) $(plancoincli keys show overlord -a) 100000000000plan --from bank2 --fees 100plan --gas auto --gas-adjustment 1.5
+plancoincli query posmining get $(plancoincli keys show bank2 -a)
+plancoincli query structure get $(plancoincli keys show bank2 -a) plan
+plancoincli query account $(plancoincli keys show bank2 -a) 
+
+plancoincli tx send $(plancoincli keys show overlord -a) $(plancoincli keys show test -a) 1000000000plan --from bank2 --fees 100plan --gas auto --gas-adjustment 1.5
+plancoincli query posmining get $(plancoincli keys show bank2 -a)
+plancoincli query structure get $(plancoincli keys show bank2 -a) plan
+plancoincli query posmining get $(plancoincli keys show overlord -a)
+plancoincli query structure get $(plancoincli keys show overlord -a) plan
+
+plancoincli tx send $(plancoincli keys show test -a) $(plancoincli keys show bank2 -a) 100000000plan --from bank2 --fees 100plan --gas auto --gas-adjustment 1.5
+plancoincli query posmining get $(plancoincli keys show test -a)
+plancoincli query structure get $(plancoincli keys show test -a) plan
+plancoincli query posmining get $(plancoincli keys show overlord -a)
+plancoincli query structure get $(plancoincli keys show overlord -a) plan
+plancoincli query posmining get $(plancoincli keys show bank2 -a)
+plancoincli query structure get $(plancoincli keys show bank2 -a) plan
+
+plancoincli keys add test1
+plancoincli tx send $(plancoincli keys show test -a) $(plancoincli keys show test1 -a) 100000000plan --from bank2 --fees 100plan --gas auto --gas-adjustment 1.5
+plancoincli keys add test2
+plancoincli tx send $(plancoincli keys show test1 -a) $(plancoincli keys show test2 -a) 10000000plan --from bank2 --fees 100plan --gas auto --gas-adjustment 1.5
+plancoincli keys add test3
+plancoincli tx send $(plancoincli keys show test2 -a) $(plancoincli keys show test3 -a) 1000000plan --from bank2 --fees 100plan --gas auto --gas-adjustment 1.5
+plancoincli keys add test4
+plancoincli tx send $(plancoincli keys show test3 -a) $(plancoincli keys show test4 -a) 100000plan --from bank2 --fees 100plan --gas auto --gas-adjustment 1.5
