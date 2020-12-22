@@ -1,4 +1,4 @@
-module github.com/plan-crypto/node/20-december-2020
+module github.com/plan-crypto/node/20-december-2020/plan-master
 
 go 1.13
 
